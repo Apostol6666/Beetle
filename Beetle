@@ -1,0 +1,72 @@
+#define PIN_PHOTO_SENSOR A0
+#define PIN_PHOTO A5
+
+const int speed_left=5;
+const int speed_right=6;
+const int dir_left=4;
+const int dir_right=7;
+const int photo_pin=A0;
+
+void setup() {
+  Serial.begin(9600);
+  
+  for (int i=4; i<=7; i++)
+    {pinMode (i, OUTPUT);}
+}
+
+void loop() {
+  int val = analogRead(PIN_PHOTO_SENSOR);
+  int val2 = analogRead(PIN_PHOTO);
+  int val5=val2-val;
+  
+  Serial.print(val2-val);
+  
+  if (val2+val>1400) { 
+  back(200);
+  if (val5<1300) {
+  if(val5>500)  turn_left_around(100);
+  else turn_right_around(100);
+  }
+  }
+  else {
+  forward (120);
+} 
+  }
+
+
+void go(bool dir_r, bool dir_l, int speed_r, int speed_l){
+digitalWrite(dir_right, dir_r);
+analogWrite(speed_right, speed_r);
+digitalWrite(dir_left, dir_l);
+analogWrite(speed_left, speed_l);
+}
+
+
+void forward(int s){
+go (LOW, HIGH, s, s);
+}
+
+void back(int s){
+go (HIGH, LOW, s, s);
+}
+
+void slowdown(bool dir_r, bool dir_l, int s_prev_r, int s_new_r, int s_prev_l, int s_new_l){
+
+go (dir_r, dir_l, s_prev_r/s_new_r, s_prev_l/s_new_l);
+}
+
+void turn_left(int s){
+go(LOW, LOW, s, 0);
+}
+
+void turn_right(int s){
+go(HIGH, HIGH, 0, s);
+}
+
+void turn_left_around(int s){
+go(LOW, LOW, s, s);
+}
+
+void turn_right_around(int s){
+go(HIGH, HIGH, s, s);
+}
